@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_DATABASE: ecom
+      MYSQL_ROOT_PASSWORD: litt
+      MYSQL_USER: user
+      MYSQL_PASSWORD: till
+    ports:
+      - "3306:3306"
+    volumes:
+      - ecom_api_data:/var/lib/mysql
+
+volumes:
+  ecom_api_data:
