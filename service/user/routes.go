@@ -30,8 +30,9 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	// get json payload
 	var payload types.RegisterPayload
-	if err := utils.ParseJSON(r, payload); err != nil {
+	if err := utils.ParseJSON(r, &payload); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
+		return
 	}
 
 	// check if user exists
@@ -45,6 +46,7 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, err := auth.HashPassword(payload.Password)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
 	}
 
 	err = h.store.CreateUser(types.User{
