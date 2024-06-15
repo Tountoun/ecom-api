@@ -51,8 +51,8 @@ func TestUserServiceHandlers(t *testing.T) {
 		router.HandleFunc("/register", handler.handleRegister)
 		router.ServeHTTP(rr, req)
 
-		if rr.Code != http.StatusOK {
-			t.Errorf("expected status code %d, got %d", http.StatusOK, rr.Code)
+		if rr.Code != http.StatusCreated {
+			t.Errorf("expected status code %d, got %d", http.StatusCreated, rr.Code)
 		}
 	})
 }
