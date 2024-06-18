@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Tountoun/ecom-api/service/product"
 	"github.com/Tountoun/ecom-api/service/user"
 	"github.com/gorilla/mux"
 )
@@ -30,6 +31,10 @@ func (s *APIServer) Run() error {
 	store := user.NewStore(s.db)
 	userHandler := user.NewHandler(store)
 	userHandler.RegisterRoutes(subrouter)
+
+	productStore := product.NewStore(s.db)
+	productHandler := product.NewHandler(productStore)
+	productHandler.RegisterRoutes(subrouter)
 
 	log.Println("Server starting listening on port", s.addr)
 	return http.ListenAndServe(s.addr, router)
