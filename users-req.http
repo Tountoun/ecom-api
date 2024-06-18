@@ -1,0 +1,28 @@
+### register a user
+POST http://localhost:8080/api/v1/register
+Content-Type: application/json
+
+{
+    "firstName": "till",
+    "lastName": "tates",
+    "email": "till@tates.com",
+    "password": "till"
+}
+
+### login with the registered user
+POST http://localhost:8080/api/v1/login
+Content-Type: application/json
+
+{
+    "email": "till@tates.com",
+    "password": "till"
+}
+
+### login using invalid data
+POST http://localhost:8080/api/v1/login
+Content-Type: application/json
+
+{
+    "email": "till@tates",
+    "password": "till"
+}
