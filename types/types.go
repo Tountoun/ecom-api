@@ -14,6 +14,14 @@ type LoginPayload struct {
 	Password  string `json:"password" validate:"required"`
 }
 
+type ProductPayload struct {
+	Name 		string 		`json:"name" validate:"required"`
+	Description string 		`json:"description" validate:"required"`
+	Image 		string 		`json:"image" validate:"required"`
+	Price 		float64 	`json:"price" validate:"required,min=0"`
+	Quantity 	int 		`json:"quantity" validate:"required,min=1"`
+}
+
 type User struct {
 	ID        int		`json:"id"`
 	FirstName string 	`json:"firstName"`
@@ -41,4 +49,5 @@ type UserStore interface {
 
 type ProductStore interface {
 	GetProducts() ([]Product, error)
+	CreateProduct(ProductPayload) error
 }
