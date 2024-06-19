@@ -53,7 +53,14 @@ func (h *Handler) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.CreateProduct(payload); err != nil {
+	product := types.Product{
+		Name: payload.Name,
+		Description: payload.Description,
+		Image: payload.Image,
+		Price: payload.Price,
+		Quantity: payload.Quantity,
+	}
+	if err := h.store.CreateProduct(product); err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}

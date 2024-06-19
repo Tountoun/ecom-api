@@ -49,5 +49,5 @@ type UserStore interface {
 
 type ProductStore interface {
 	GetProducts() ([]Product, error)
-	CreateProduct(ProductPayload) error
+	CreateProduct(Product) error
 }

@@ -86,6 +86,6 @@ func (mock *mockProductStore) GetProducts() ([]types.Product, error) {
 	return make([]types.Product, 0), nil
 }
 
-func (mock *mockProductStore) CreateProduct(payload types.ProductPayload) error {
+func (mock *mockProductStore) CreateProduct(payload types.Product) error {
 	return nil
 }
