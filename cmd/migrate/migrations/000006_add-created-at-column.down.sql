@@ -1,0 +1,1 @@
+alter table order_items drop column createdAt;
