@@ -13,3 +13,17 @@ Content-Type: application/json
     "price": 4500,
     "quantity": 23
 }
+
+
+### Update product
+PUT http://localhost:8080/api/v1/products/1
+Content-Type: application/json
+
+{
+    "name": "T-Shirt 42",
+    "description": "Balengacia T-shirt",
+    "image": "updated.png",
+    "price": 4550,
+    "quantity": 21
+}
+

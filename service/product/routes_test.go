@@ -98,3 +98,7 @@ func (mock *mockProductStore) GetProductsByIDs(ids []int) ([]types.Product, erro
 func (mock *mockProductStore) UpdateProduct(product types.Product) error {
 	return nil
 }
+
+func (mock *mockProductStore) GetProductByID(id int) (types.Product, error) {
+	return types.Product{}, nil
+}

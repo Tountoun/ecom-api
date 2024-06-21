@@ -3,6 +3,7 @@ package product
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/Tountoun/ecom-api/types"
 	"github.com/Tountoun/ecom-api/utils"
@@ -23,6 +24,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 
 	router.HandleFunc("/products", h.handleGetProduct).Methods(http.MethodGet)
 	router.HandleFunc("/products", h.handleCreateProduct).Methods(http.MethodPost)
+	router.HandleFunc("/products/{id}", h.handleUpdateProduct).Methods(http.MethodPut)
 }
 
 
@@ -66,4 +68,43 @@ func (h *Handler) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusCreated, nil)
+}
+
+func (h *Handler) handleUpdateProduct(w http.ResponseWriter, r *http.Request) {
+	var payload types.ProductPayload
+	
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// get the existing product in the database
+	existingProduct, err := h.store.GetProductByID(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("product with id %d not found", id))
+		return
+	}
+
+	// parse payload
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// validate the payload
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload %v", errors))
+		return
+	}
+
+	updateProductByPayload(&existingProduct, payload)
+
+	if err:= h.store.UpdateProduct(existingProduct); err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"message": "product updated successfully"})
 }

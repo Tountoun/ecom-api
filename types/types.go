@@ -79,6 +79,7 @@ type ProductStore interface {
 	CreateProduct(Product) error
 	GetProductsByIDs(ids []int) ([]Product, error)
 	UpdateProduct(Product) error
+	GetProductByID(id int) (Product, error)
 }
 
 type OrderStore interface {
