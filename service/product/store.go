@@ -2,6 +2,8 @@ package product
 
 import (
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/Tountoun/ecom-api/types"
 )
@@ -39,6 +41,39 @@ func (s *Store) GetProducts() ([]types.Product, error) {
 
 func (s *Store) CreateProduct(p types.Product) error {
 	_, err := s.db.Exec("INSERT INTO products (name, description, image, price, quantity) VALUES (?, ?, ?, ?, ?)", p.Name, p.Description, p.Image, p.Price, p.Quantity)
+	return err
+}
+
+func (s *Store) GetProductsByIDs(ids []int) ([]types.Product, error) {
+	// format request string
+	argsIndicator := strings.Repeat(", ?", len(ids) - 1)
+	query := fmt.Sprintf("SELECT * FROM products WHERE id IN (?%s)", argsIndicator)
+
+	args := make([]interface{}, len(ids))
+	for i, v := range ids {
+		args[i] = v
+	}
+
+	rows, err := s.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	var products []types.Product
+
+	for rows.Next() {
+		product, err := scanRowsIntoProduct(rows)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, *product)
+	}
+
+	return products, nil
+}
+
+func (s *Store) UpdateProduct(p types.Product) error {
+	query := "UPDATE products SET name=?, description=?, image=?, price=?, quantity=? WHERE id=?"
+	_, err := s.db.Exec(query, p.Name, p.Description, p.Image, p.Price, p.Quantity, p.ID)
 	return err
 }
 

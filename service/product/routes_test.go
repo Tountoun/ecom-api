@@ -89,3 +89,12 @@ func (mock *mockProductStore) GetProducts() ([]types.Product, error) {
 func (mock *mockProductStore) CreateProduct(payload types.Product) error {
 	return nil
 }
+
+func (mock *mockProductStore) GetProductsByIDs(ids []int) ([]types.Product, error) {
+	return nil, nil
+}
+
+
+func (mock *mockProductStore) UpdateProduct(product types.Product) error {
+	return nil
+}
