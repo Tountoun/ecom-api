@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/Tountoun/ecom-api/types"
 	"github.com/gorilla/mux"
@@ -38,7 +39,7 @@ func TestProductServiceHandlers(t *testing.T) {
 			t.Errorf("expected empty data but got nil")
 		}
 
-		resp := new([]types.ProductPayload)
+		resp := new([]types.Product)
 		if err := json.NewDecoder(rr.Body).Decode(resp); err != nil {
 			t.Errorf("error while decoding response body")
 		}
@@ -65,6 +66,36 @@ func TestProductServiceHandlers(t *testing.T) {
 
 		if rr.Code != http.StatusCreated {
 			t.Errorf("expected status code %d, got %d", http.StatusCreated, rr.Code)
+		}
+	})
+
+	t.Run("should return one product by id", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodGet, "/products/1", http.NoBody)
+		if err != nil {
+			t.Fatal(err)
+		}
+		
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+
+		router.HandleFunc("/products/{id}", handler.handleGetProductByID)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusOK {
+			t.Errorf("expected status code %d, got %d", http.StatusOK, rr.Code)
+		}
+
+		if rr.Body == nil {
+			t.Errorf("expected data but got nil")
+		}
+
+		resp := new(types.Product)
+		if err := json.NewDecoder(rr.Body).Decode(resp); err != nil {
+			t.Errorf("error while decoding response body")
+		}
+	
+		if resp.ID != 1 {
+			t.Errorf("expected product id 1 but got %d", resp.ID)
 		}
 	})
 }
@@ -100,5 +131,18 @@ func (mock *mockProductStore) UpdateProduct(product types.Product) error {
 }
 
 func (mock *mockProductStore) GetProductByID(id int) (types.Product, error) {
-	return types.Product{}, nil
+	return getProduct(), nil
+}
+
+
+func getProduct() types.Product {
+	return types.Product {
+		ID: 1,
+		Name: "house brush",
+		Description: "brush for house cleaning",
+		Image: "brush.png",
+		Price: 56,
+		Quantity: 132,
+		CreatedAt: time.Now(),
+	}
 }
