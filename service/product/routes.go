@@ -25,6 +25,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/products", h.handleGetProduct).Methods(http.MethodGet)
 	router.HandleFunc("/products", h.handleCreateProduct).Methods(http.MethodPost)
 	router.HandleFunc("/products/{id}", h.handleUpdateProduct).Methods(http.MethodPut)
+	router.HandleFunc("/products/{id}", h.handleGetProductByID).Methods(http.MethodGet)
 }
 
 
@@ -39,6 +40,23 @@ func (h *Handler) handleGetProduct(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, products)
 }
 
+func (h *Handler) handleGetProductByID(w http.ResponseWriter, r *http.Request) {
+	// convert the request path value `id` to int
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// get the product from the database
+	product, err := h.store.GetProductByID(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("product with id %d not found", id))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, product)
+}
 
 func (h *Handler) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	// get json payload

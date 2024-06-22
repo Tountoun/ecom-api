@@ -2,6 +2,10 @@
 GET  http://localhost:8080/api/v1/products
 
 
+### get one product by id
+GET http://localhost:8080/api/v1/products/1
+
+
 ### create product
 POST http://localhost:8080/api/v1/products
 Content-Type: application/json
