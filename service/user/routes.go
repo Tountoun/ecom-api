@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"net/mail"
 
 	"github.com/Tountoun/ecom-api/config"
 	"github.com/Tountoun/ecom-api/service/auth"
@@ -23,6 +24,7 @@ func NewHandler(store types.UserStore) *Handler {
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/login", h.handleLogin).Methods("POST")
 	router.HandleFunc("/register", h.handleRegister).Methods("POST")
+	router.HandleFunc("/users", h.handleGetUserByEmail).Methods(http.MethodGet)
 }
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
@@ -105,4 +107,31 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusCreated, nil)
+}
+
+func (h *Handler) handleGetUserByEmail(w http.ResponseWriter, r *http.Request) {
+	email := r.URL.Query().Get("email")
+
+	if email == "" {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("email value cannot be empty"))
+		return
+	}
+
+	if !validateEmail(email) {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("email %s is an invalid email", email))
+		return
+	}
+
+	user, err := h.store.GetUserByEmail(email)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, *user)
+}
+
+func validateEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }
