@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Tountoun/ecom-api/config"
@@ -79,17 +80,21 @@ func permissionDenied(w http.ResponseWriter) {
 
 
 func getRequestToken(r *http.Request) string {
-	tokentAuth := r.Header.Get("Authorization")
+	tokenAuth := r.Header.Get("Authorization")
 
-	if tokentAuth == "" {
+	if tokenAuth == "" {
 		return ""
 	}
 
-	return tokentAuth
+	return tokenAuth
 }
 
 func validateToken(tokenString string) (*jwt.Token, error) {
-	return jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+	if !strings.HasPrefix(tokenString, "Bearer ") {
+		return nil, fmt.Errorf("authorization header value must start with Bearer ")
+	}
+	tokenValue := strings.Replace(tokenString, "Bearer ", "", 1)
+	return jwt.Parse(tokenValue, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}

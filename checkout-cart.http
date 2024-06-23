@@ -1,7 +1,7 @@
 ### Checkout cart
 POST http://localhost:8080/api/v1/cart/checkout
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVkQXQiOjE3MTk1MjU3NzYsInVzZXJJRCI6IjEifQ.bjqzT38mSPnYqyhyxOGfushqmYcYIS8fdmtHh9kx5wQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVkQXQiOjE3MTk3MzU1NTEsInVzZXJJRCI6IjEifQ.7AYTJ6uDrLZYh1eWvLBoXOONm-L-5XagFKne93zNI_U
 
 {
     "items": [
